@@ -31,9 +31,18 @@ method list_sets_and_descriptions*(this: OaiRequest): seq[(string, string)] {.ba
     result.add((spec_seq[i], name_seq[i]))
     i += 1
 
+method list_metadata_formats*(this: OaiRequest): seq[string] {.base.} =
+  let request = this.base_url & "?verb=ListMetadataFormats"
+  let response = client.getContent(request)
+  let xml_response = Node.fromStringE(response)
+  let prefixes = $(xml_response // "metadataPrefix")
+  result = get_text_value_of_node(prefixes, "metadataPrefix")
+
 when isMainModule:
   let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler")
   block:
     echo test_oai.list_sets()
   block:
     echo test_oai.list_sets_and_descriptions()
+  block:
+    echo test_oai.list_metadata_formats()
