@@ -11,21 +11,17 @@ proc get_text_value_of_node(xml: string, node: string): seq[string] =
 type OaiRequest* = ref object of RootObj
   base_url*: string
 
-method make_request*(this: OaiRequest, request: string): string {.base.} =
+method make_request*(this: OaiRequest, request: string): Node {.base.} =
   let response = client.getContent(request)
-  $(Node.fromStringE(response))
+  Node.fromStringE(response)
 
 method list_sets*(this: OaiRequest): seq[string] {.base.} =
-  let request = this.base_url & "?verb=ListSets" 
-  let response = client.getContent(request)
-  let xml_response = Node.fromStringE(response)
+  let xml_response = this.make_request(this.base_url & "?verb=ListSets")
   let results = $(xml_response // "setSpec")
-  result = get_text_value_of_node(results, "setSpec")
+  get_text_value_of_node(results, "setSpec")
 
 method list_sets_and_descriptions*(this: OaiRequest): seq[(string, string)] {.base.} =
-  let request = this.base_url & "?verb=ListSets"
-  let response = client.getContent(request)
-  let xml_response = Node.fromStringE(response)
+  let xml_response = this.make_request(this.base_url & "?verb=ListSets")
   let set_specs = $(xml_response // "setSpec")
   let spec_seq = get_text_value_of_node(set_specs, "setSpec")
   let set_names = $(xml_response // "setName")
@@ -36,14 +32,12 @@ method list_sets_and_descriptions*(this: OaiRequest): seq[(string, string)] {.ba
     i += 1
 
 method list_metadata_formats*(this: OaiRequest): seq[string] {.base.} =
-  let request = this.base_url & "?verb=ListMetadataFormats"
-  let response = client.getContent(request)
-  let xml_response = Node.fromStringE(response)
+  let xml_response = this.make_request(this.base_url & "?verb=ListMetadataFormats")
   let prefixes = $(xml_response // "metadataPrefix")
-  result = get_text_value_of_node(prefixes, "metadataPrefix")
+  get_text_value_of_node(prefixes, "metadataPrefix")
 
 method identify*(this: OaiRequest): string {.base.} =
-  this.make_request(this.base_url & "?verb=Identify")
+  $(this.make_request(this.base_url & "?verb=Identify"))
 
 when isMainModule:
   let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler")
