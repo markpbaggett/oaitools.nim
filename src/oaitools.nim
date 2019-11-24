@@ -11,7 +11,7 @@ proc get_text_value_of_node(xml: string, node: string): seq[string] =
 type OaiRequest* = ref object of RootObj
   base_url*: string
 
-method make_request*(this: OaiRequest, request: string): Node {.base.} =
+method make_request(this: OaiRequest, request: string): Node {.base.} =
   let response = client.getContent(request)
   Node.fromStringE(response)
 
