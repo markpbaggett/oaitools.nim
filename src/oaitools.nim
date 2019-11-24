@@ -11,6 +11,10 @@ proc get_text_value_of_node(xml: string, node: string): seq[string] =
 type OaiRequest* = ref object of RootObj
   base_url*: string
 
+method make_request*(this: OaiRequest, request: string): string {.base.} =
+  let response = client.getContent(request)
+  $(Node.fromStringE(response))
+
 method list_sets*(this: OaiRequest): seq[string] {.base.} =
   let request = this.base_url & "?verb=ListSets" 
   let response = client.getContent(request)
@@ -38,6 +42,9 @@ method list_metadata_formats*(this: OaiRequest): seq[string] {.base.} =
   let prefixes = $(xml_response // "metadataPrefix")
   result = get_text_value_of_node(prefixes, "metadataPrefix")
 
+method identify*(this: OaiRequest): string {.base.} =
+  this.make_request(this.base_url & "?verb=Identify")
+
 when isMainModule:
   let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler")
   block:
@@ -46,3 +53,5 @@ when isMainModule:
     echo test_oai.list_sets_and_descriptions()
   block:
     echo test_oai.list_metadata_formats()
+  block:
+    echo test_oai.identify()
