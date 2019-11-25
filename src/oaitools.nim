@@ -28,8 +28,9 @@ method get_token(this: OaiRequest, node: string): string {.base.} =
   except IndexError:
     "" 
 
-method get_complete_size*(this: OaiRequest, node: string): string {.base.} =
-  # Now that I've made this requstless, need to think about whether it should be public.
+method get_complete_size*(this: OaiRequest, request: string): string {.base.} =
+  let xml_response = this.make_request(request)
+  let node = $(xml_response // "resumptionToken")
   try:
     get_attribute_value_of_node(node, "completeListSize")[0]
   except IndexError:
@@ -62,15 +63,17 @@ method identify*(this: OaiRequest): string {.base.} =
 
 method list_identifiers*(this: OaiRequest, metadata_format: string): string {.base.} =
   var set_string = ""
+  var xml_response: Node
+  var token = "first_pass"
   if this.oai_set != "":
     set_string = "&set=" & this.oai_set
-  let xml_response = this.make_request(this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string)
-  let token = this.get_token($(xml_response // "resumptionToken"))
-  echo token
-  echo this.get_complete_size($(xml_response // "resumptionToken"))
+  var request = this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string
+  let total_size = this.get_complete_size(request)
+  echo total_size
+
 
 when isMainModule:
-  let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler", oai_set: "utk_bcpl")
+  let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler", oai_set: "utk_heilman")
   block:
     echo test_oai.list_sets()
   block:
