@@ -22,8 +22,19 @@ method make_request(this: OaiRequest, request: string): Node {.base.} =
   let response = client.getContent(request)
   Node.fromStringE(response)
 
-method get_token(this: OaiRequest, node: string): string {.base.}=
-  node.split(">")[1].replace("</resumptionToken", "")
+method get_token(this: OaiRequest, node: string): string {.base.} =
+  try:
+    node.split(">")[1].replace("</resumptionToken", "")
+  except IndexError:
+    "" 
+
+method get_complete_size*(this: OaiRequest, node: string): string {.base.} =
+  # Now that I've made this requstless, need to think about whether it should be public.
+  try:
+    get_attribute_value_of_node(node, "completeListSize")[0]
+  except IndexError:
+    # Instead of returning a blank string, this should return the total number of metadata records
+    ""
 
 method list_sets*(this: OaiRequest): seq[string] {.base.} =
   let xml_response = this.make_request(this.base_url & "?verb=ListSets")
@@ -50,20 +61,16 @@ method identify*(this: OaiRequest): string {.base.} =
   $(this.make_request(this.base_url & "?verb=Identify"))
 
 method list_identifiers*(this: OaiRequest, metadata_format: string): string {.base.} =
-  let xml_response = this.make_request(this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format)
-  let token = $(xml_response // "resumptionToken")
-  this.get_token(token)
-
-method get_complete_size*(this: OaiRequest, metadata_format: string): string {.base.} =
   var set_string = ""
   if this.oai_set != "":
     set_string = "&set=" & this.oai_set
   let xml_response = this.make_request(this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string)
-  let token = $(xml_response // "resumptionToken")
-  get_attribute_value_of_node(token, "completeListSize")[0]
+  let token = this.get_token($(xml_response // "resumptionToken"))
+  echo token
+  echo this.get_complete_size($(xml_response // "resumptionToken"))
 
 when isMainModule:
-  let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler", oai_set: "utk_heilman")
+  let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler", oai_set: "utk_bcpl")
   block:
     echo test_oai.list_sets()
   block:
@@ -72,7 +79,5 @@ when isMainModule:
     echo test_oai.list_metadata_formats()
   block:
     echo test_oai.identify()
-  block:
-    echo test_oai.get_complete_size("MODS")
   block:
     echo test_oai.list_identifiers("MODS")
