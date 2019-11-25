@@ -22,6 +22,9 @@ method make_request(this: OaiRequest, request: string): Node {.base.} =
   let response = client.getContent(request)
   Node.fromStringE(response)
 
+method get_token(this: OaiRequest, node: string): string {.base.}=
+  node.split(">")[1].replace("</resumptionToken", "")
+
 method list_sets*(this: OaiRequest): seq[string] {.base.} =
   let xml_response = this.make_request(this.base_url & "?verb=ListSets")
   let results = $(xml_response // "setSpec")
@@ -46,6 +49,11 @@ method list_metadata_formats*(this: OaiRequest): seq[string] {.base.} =
 method identify*(this: OaiRequest): string {.base.} =
   $(this.make_request(this.base_url & "?verb=Identify"))
 
+method list_identifiers*(this: OaiRequest, metadata_format: string): string {.base.} =
+  let xml_response = this.make_request(this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format)
+  let token = $(xml_response // "resumptionToken")
+  this.get_token(token)
+
 method get_complete_size*(this: OaiRequest, metadata_format: string): string {.base.} =
   var set_string = ""
   if this.oai_set != "":
@@ -66,3 +74,5 @@ when isMainModule:
     echo test_oai.identify()
   block:
     echo test_oai.get_complete_size("MODS")
+  block:
+    echo test_oai.list_identifiers("MODS")
