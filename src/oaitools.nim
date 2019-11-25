@@ -31,14 +31,13 @@ method get_token(this: OaiRequest, node: string): string {.base.} =
 method count_documents_on_page(this: OaiRequest, node: string): int {.base.} =
   count(node, "<header>")
 
-method get_complete_size*(this: OaiRequest, request: string): string {.base.} =
+method get_complete_size*(this: OaiRequest, request: string): int {.base.} =
   let xml_response = this.make_request(request)
   let node = $(xml_response // "resumptionToken")
   try:
-    get_attribute_value_of_node(node, "completeListSize")[0]
+    parseInt(get_attribute_value_of_node(node, "completeListSize")[0])
   except IndexError:
-    # Instead of returning a blank string, this should return the total number of metadata records
-    ""
+    this.count_documents_on_page($(xml_response // "header"))
 
 method list_sets*(this: OaiRequest): seq[string] {.base.} =
   let xml_response = this.make_request(this.base_url & "?verb=ListSets")
@@ -72,6 +71,7 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string]
     set_string = "&set=" & this.oai_set
   var request = this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string
   #let total_size = this.get_complete_size(request)
+  #echo total_size
   var identifiers: seq[string] = @[]
   while token.len > 0:
     xml_response = this.make_request(request)
@@ -83,7 +83,7 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string]
 
 
 when isMainModule:
-  let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler", oai_set: "utk_heilman")
+  let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler", oai_set: "utk_wderfilms")
   block:
     echo test_oai.list_sets()
   block:
