@@ -4,7 +4,7 @@ var client = newHttpClient()
 
 proc get_text_value_of_attributeless_node(xml: string, node: string): seq[string] =
   for value in xml.split("<" & node & ">"):
-    let new_value = value.replace("</" & node & ">")
+    let new_value = value.replace("</" & node & ">").replace("<" & node & ">")
     if len(new_value) > 0:
       result.add(new_value)
 
@@ -12,6 +12,11 @@ proc get_attribute_value_of_node(xml: string, attribute: string): seq[string] =
   for value in xml.split(" "):
     if value.contains(attribute):
       result.add(value.split("=")[1].replace("\"", ""))
+
+proc write_to_disk(filename: string, contents: string, destination_directory: string): string =
+  let path = destination_directory & "/" & filename
+  writeFile(path, contents)
+  "Created " & filename & " at " & destination_directory
 
 type 
   OaiRequest* = ref object of RootObj
@@ -81,6 +86,25 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string]
     token = this.get_token($(xml_response // "resumptionToken"))
     request = this.base_url & "?verb=ListIdentifiers&resumptionToken=" & token
 
+method harvest_metadata_records*(this: OaiRequest, metadata_format: string, output_directory: string): (int, int) {.base.} =
+  var set_string = ""
+  var xml_response: Node
+  var token = "first_pass"
+  if this.oai_set != "":
+    set_string = "&set=" & this.oai_set
+  var request = this.base_url & "?verb=ListRecords&metadataPrefix=" & metadata_format & set_string
+  var i = 1
+  let total_size = this.get_complete_size(request)
+  var records: seq[string] = @[]
+  while token.len > 0:
+    xml_response = this.make_request(request)
+    records = get_text_value_of_attributeless_node($(xml_response // "metadata"), "metadata")
+    for record in records:
+      discard write_to_disk($(i) & ".xml", record, output_directory)
+      i += 1
+    token = this.get_token($(xml_response // "resumptionToken"))
+    request = this.base_url & "?verb=ListRecords&resumptionToken=" & token
+  (i - 1, total_size)
 
 when isMainModule:
   let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler", oai_set: "utk_wderfilms")
@@ -94,3 +118,5 @@ when isMainModule:
     echo test_oai.identify()
   block:
     echo test_oai.list_identifiers("MODS")
+  block:
+    echo test_oai.harvest_metadata_records("MODS", "/home/mark/nim_projects/oaitools/output")
