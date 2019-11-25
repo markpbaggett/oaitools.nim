@@ -14,9 +14,13 @@ proc get_attribute_value_of_node(xml: string, attribute: string): seq[string] =
       result.add(value.split("=")[1].replace("\"", ""))
 
 proc write_to_disk(filename: string, contents: string, destination_directory: string): string =
-  let path = destination_directory & "/" & filename
-  writeFile(path, contents)
-  "Created " & filename & " at " & destination_directory
+  try:
+    let path = destination_directory & "/" & filename
+    writeFile(path, contents)
+    "Created " & filename & " at " & destination_directory
+  except IOError:
+    echo "Destination directory does not exist!"
+    raise
 
 type 
   OaiRequest* = ref object of RootObj
@@ -105,18 +109,3 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
     token = this.get_token($(xml_response // "resumptionToken"))
     request = this.base_url & "?verb=ListRecords&resumptionToken=" & token
   (i - 1, total_size)
-
-when isMainModule:
-  let test_oai = OaiRequest(base_url: "https://dpla.lib.utk.edu/repox/OAIHandler", oai_set: "utk_wderfilms")
-  block:
-    echo test_oai.list_sets()
-  block:
-    echo test_oai.list_sets_and_descriptions()
-  block:
-    echo test_oai.list_metadata_formats()
-  block:
-    echo test_oai.identify()
-  block:
-    echo test_oai.list_identifiers("MODS")
-  block:
-    echo test_oai.harvest_metadata_records("MODS", "/home/mark/nim_projects/oaitools/output")
