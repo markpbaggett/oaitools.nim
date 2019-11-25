@@ -28,6 +28,9 @@ method get_token(this: OaiRequest, node: string): string {.base.} =
   except IndexError:
     "" 
 
+method count_documents_on_page(this: OaiRequest, node: string): int {.base.} =
+  count(node, "<header>")
+
 method get_complete_size*(this: OaiRequest, request: string): string {.base.} =
   let xml_response = this.make_request(request)
   let node = $(xml_response // "resumptionToken")
@@ -69,7 +72,11 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): string {.ba
     set_string = "&set=" & this.oai_set
   var request = this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string
   let total_size = this.get_complete_size(request)
-  echo total_size
+  var docs_in_request = 0
+  while token.len > 0:
+    xml_response = this.make_request(request)
+    docs_in_request = this.count_documents_on_page($(xml_response // "header"))
+    token = this.get_token($(xml_response // "resumptionToken"))
 
 
 when isMainModule:
