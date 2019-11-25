@@ -64,19 +64,22 @@ method list_metadata_formats*(this: OaiRequest): seq[string] {.base.} =
 method identify*(this: OaiRequest): string {.base.} =
   $(this.make_request(this.base_url & "?verb=Identify"))
 
-method list_identifiers*(this: OaiRequest, metadata_format: string): string {.base.} =
+method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string] {.base.} =
   var set_string = ""
   var xml_response: Node
   var token = "first_pass"
   if this.oai_set != "":
     set_string = "&set=" & this.oai_set
   var request = this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string
-  let total_size = this.get_complete_size(request)
-  var docs_in_request = 0
+  #let total_size = this.get_complete_size(request)
+  var identifiers: seq[string] = @[]
   while token.len > 0:
     xml_response = this.make_request(request)
-    docs_in_request = this.count_documents_on_page($(xml_response // "header"))
+    identifiers = get_text_value_of_attributeless_node($(xml_response // "identifier"), "identifier")
+    for identifier in identifiers:
+      result.add(identifier)
     token = this.get_token($(xml_response // "resumptionToken"))
+    request = this.base_url & "?verb=ListIdentifiers&resumptionToken=" & token
 
 
 when isMainModule:
