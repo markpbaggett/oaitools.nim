@@ -1,6 +1,4 @@
-import httpclient, xmltools, strutils, options
-
-var client = newHttpClient()
+import httpclient, xmltools, strutils, options, typetraits
 
 proc get_text_value_of_attributeless_node(xml: string, node: string): seq[string] =
   for value in xml.split("<" & node & ">"):
@@ -26,9 +24,11 @@ type
   OaiRequest* = ref object of RootObj
     base_url*: string
     oai_set*: string
+    client: HttpClient
+  
 
 method make_request(this: OaiRequest, request: string): Node {.base.} =
-  let response = client.getContent(request)
+  let response = this.client.getContent(request)
   Node.fromStringE(response)
 
 method get_token(this: OaiRequest, node: string): string {.base.} =
@@ -40,8 +40,11 @@ method get_token(this: OaiRequest, node: string): string {.base.} =
 method count_documents_on_page(this: OaiRequest, node: string): int {.base.} =
   count(node, "<header>")
 
-method get_complete_size*(this: OaiRequest, request: string): int {.base.} =
-  let xml_response = this.make_request(request)
+method get_complete_size*(this: OaiRequest, metadata_format: string): int {.base.} =
+  var set_string = ""
+  if this.oai_set != "":
+    set_string = "&set=" & this.oai_set
+  let xml_response = this.make_request(this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string)
   let node = $(xml_response // "resumptionToken")
   try:
     parseInt(get_attribute_value_of_node(node, "completeListSize")[0])
@@ -109,3 +112,6 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
     token = this.get_token($(xml_response // "resumptionToken"))
     request = this.base_url & "?verb=ListRecords&resumptionToken=" & token
   (i - 1, total_size)
+
+proc newOaiRequest(url: string, oai_set=""): OaiRequest =
+  OaiRequest(base_url: url, oai_set: oai_set, client: newHttpClient())
