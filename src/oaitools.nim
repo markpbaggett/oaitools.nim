@@ -1,5 +1,4 @@
-import httpclient, xmltools, strutils, options, typetraits
-
+import httpclient, xmltools, strutils, options
 proc get_text_value_of_attributeless_node(xml: string, node: string): seq[string] =
   for value in xml.split("<" & node & ">"):
     let new_value = value.replace("</" & node & ">").replace("<" & node & ">")
@@ -25,7 +24,6 @@ type
     base_url*: string
     oai_set*: string
     client: HttpClient
-  
 
 method make_request(this: OaiRequest, request: string): Node {.base.} =
   let response = this.client.getContent(request)
@@ -111,5 +109,21 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
     request = this.base_url & "?verb=ListRecords&resumptionToken=" & token
   (i - 1, total_size)
 
+method list_records*(this: OaiRequest, metadata_format: string): seq[string] {.base.} =
+  var set_string = ""
+  var xml_response: Node
+  var token = "first_pass"
+  if this.oai_set != "":
+    set_string = "&set=" & this.oai_set
+  var request = this.base_url & "?verb=ListRecords&metadataPrefix=" & metadata_format & set_string
+  var records: seq[string] = @[]
+  while token.len > 0:
+    xml_response = this.make_request(request)
+    records = get_text_value_of_attributeless_node($(xml_response // "metadata"), "metadata")
+    for record in records:
+      result.add(record)
+    token = this.get_token($(xml_response // "resumptionToken"))
+    request = this.base_url & "?verb=ListIdentifiers&resumptionToken=" & token
+    
 proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   OaiRequest(base_url: url, oai_set: oai_set, client: newHttpClient())
