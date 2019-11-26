@@ -82,8 +82,6 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string]
   if this.oai_set != "":
     set_string = "&set=" & this.oai_set
   var request = this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string
-  #let total_size = this.get_complete_size(request)
-  #echo total_size
   var identifiers: seq[string] = @[]
   while token.len > 0:
     xml_response = this.make_request(request)
@@ -113,5 +111,5 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
     request = this.base_url & "?verb=ListRecords&resumptionToken=" & token
   (i - 1, total_size)
 
-proc newOaiRequest(url: string, oai_set=""): OaiRequest =
+proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   OaiRequest(base_url: url, oai_set: oai_set, client: newHttpClient())
