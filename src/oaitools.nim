@@ -1,4 +1,5 @@
 import httpclient, xmltools, strutils, options
+
 proc get_text_value_of_attributeless_node(xml: string, node: string): seq[string] =
   for value in xml.split("<" & node & ">"):
     let new_value = value.replace("</" & node & ">").replace("<" & node & ">")
@@ -124,6 +125,6 @@ method list_records*(this: OaiRequest, metadata_format: string): seq[string] {.b
       result.add(record)
     token = this.get_token($(xml_response // "resumptionToken"))
     request = this.base_url & "?verb=ListIdentifiers&resumptionToken=" & token
-    
+
 proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   OaiRequest(base_url: url, oai_set: oai_set, client: newHttpClient())
