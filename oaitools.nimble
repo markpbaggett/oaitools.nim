@@ -12,3 +12,8 @@ srcDir        = "src"
 
 requires "nim >= 1.0.2"
 requires "xmltools >= 0.1.5"
+
+# Tests
+
+task test, "Test":
+  exec "nim c -r tests/tests.nim"
