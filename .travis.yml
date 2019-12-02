@@ -1,0 +1,6 @@
+services:
+  - docker
+before_install:
+  - docker pull nimlang/nim:1.0.2
+script:
+  - docker run --rm -v `pwd`:/usr/src/app -w /usr/src/app nimlang/nim:1.0.2 /bin/bash -c "nimble install -y; nimble test"
