@@ -1,5 +1,8 @@
 # Nim OAI Tools
 
+
+![Travis icon](https://travis-ci.org/markpbaggett/noaitools.png)
+
 A high-level OAI-PMH library for Nim.
 
 # Examples
