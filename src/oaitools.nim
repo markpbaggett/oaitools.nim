@@ -224,4 +224,9 @@ proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   ##
   ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler", "utk_wderfilms")
   ##
-  OaiRequest(base_url: url, oai_set: oai_set, client: newHttpClient())
+  var base_url = ""
+  if url.startsWith("http") == false:
+    base_url = fmt"http://{url}"
+  else:
+    base_url = url
+  OaiRequest(base_url: base_url, oai_set: oai_set, client: newHttpClient())
