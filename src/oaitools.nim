@@ -1,8 +1,8 @@
-import httpclient, xmltools, strutils, options
+import httpclient, xmltools, strutils, options, strformat
 
 proc get_text_value_of_attributeless_node(xml: string, node: string): seq[string] =
-  for value in xml.split("<" & node & ">"):
-    let new_value = value.replace("</" & node & ">").replace("<" & node & ">")
+  for value in xml.split(fmt"<{node}>"):
+    let new_value = value.replace(fmt"</{node}>").replace(fmt"<{node}>")
     if len(new_value) > 0:
       result.add(new_value)
 
@@ -15,7 +15,7 @@ proc write_to_disk(filename: string, contents: string, destination_directory: st
   try:
     let path = destination_directory & "/" & filename
     writeFile(path, contents)
-    "Created " & filename & " at " & destination_directory
+    fmt"Created {filename} at {destination_directory}."
   except IOError:
     echo "Destination directory does not exist!"
     raise
@@ -61,8 +61,8 @@ method get_complete_size*(this: OaiRequest, metadata_format: string): int {.base
   ##
   var set_string = ""
   if this.oai_set != "":
-    set_string = "&set=" & this.oai_set
-  let xml_response = this.make_request(this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string)
+    set_string = fmt"&set={this.oai_set}"
+  let xml_response = this.make_request(fmt"{this.base_url}?verb=ListIdentifiers&metadataPrefix={metadata_format}{set_string}")
   let node = $(xml_response // "resumptionToken")
   try:
     parseInt(get_attribute_value_of_node(node, "completeListSize")[0])
@@ -79,7 +79,7 @@ method list_sets*(this: OaiRequest): seq[string] {.base.} =
   ##   var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler")
   ##   x.list_sets()
   ##
-  let xml_response = this.make_request(this.base_url & "?verb=ListSets")
+  let xml_response = this.make_request(fmt"{this.base_url}?verb=ListSets")
   let results = $(xml_response // "setSpec")
   get_text_value_of_attributeless_node(results, "setSpec")
 
@@ -93,7 +93,7 @@ method list_sets_and_descriptions*(this: OaiRequest): seq[(string, string)] {.ba
   ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler")
   ##    x.list_sets_and_descriptions()
   ##
-  let xml_response = this.make_request(this.base_url & "?verb=ListSets")
+  let xml_response = this.make_request(fmt"{this.base_url}?verb=ListSets")
   let set_specs = $(xml_response // "setSpec")
   let spec_seq = get_text_value_of_attributeless_node(set_specs, "setSpec")
   let set_names = $(xml_response // "setName")
@@ -113,7 +113,7 @@ method list_metadata_formats*(this: OaiRequest): seq[string] {.base.} =
   ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler")
   ##    x.list_metadata_formats()
   ##
-  let xml_response = this.make_request(this.base_url & "?verb=ListMetadataFormats")
+  let xml_response = this.make_request(fmt"{this.base_url}?verb=ListMetadataFormats")
   let prefixes = $(xml_response // "metadataPrefix")
   get_text_value_of_attributeless_node(prefixes, "metadataPrefix")
 
@@ -127,7 +127,7 @@ method identify*(this: OaiRequest): string {.base.} =
   ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler")
   ##    x.identify()
   ##
-  $(this.make_request(this.base_url & "?verb=Identify"))
+  $(this.make_request(fmt"{this.base_url}?verb=Identify"))
 
 method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string] {.base.} =
   ## Returns a sequence of identifiers for records belonging to an OAI-PMH request.
@@ -143,8 +143,8 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string]
   var xml_response: Node
   var token = "first_pass"
   if this.oai_set != "":
-    set_string = "&set=" & this.oai_set
-  var request = this.base_url & "?verb=ListIdentifiers&metadataPrefix=" & metadata_format & set_string
+    set_string = fmt"&set={this.oai_set}"
+  var request = fmt"{this.base_url}?verb=ListIdentifiers&metadataPrefix={metadata_format}{set_string}"
   var identifiers: seq[string] = @[]
   while token.len > 0:
     xml_response = this.make_request(request)
@@ -152,7 +152,7 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string]
     for identifier in identifiers:
       result.add(identifier)
     token = this.get_token($(xml_response // "resumptionToken"))
-    request = this.base_url & "?verb=ListIdentifiers&resumptionToken=" & token
+    request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
 
 method harvest_metadata_records*(this: OaiRequest, metadata_format: string, output_directory: string): (int, int) {.base.} =
   ## Harvests metadata records from an OAI-PMH request to disk.
@@ -167,14 +167,14 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
   ## .. code-block:: nim
   ##
   ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler", "utk_wderfilms")
-  ##    x.list_identifiers("MODS")
+  ##    x.harvest_metadata_records("MODS", "/home/mark/nim_projects/oaitools/output")
   ##
   var set_string = ""
   var xml_response: Node
   var token = "first_pass"
   if this.oai_set != "":
-    set_string = "&set=" & this.oai_set
-  var request = this.base_url & "?verb=ListRecords&metadataPrefix=" & metadata_format & set_string
+    set_string = fmt"&set={this.oai_set}"
+  var request = fmt"{this.base_url}?verb=ListRecords&metadataPrefix={metadata_format}{set_string}"
   var i = 1
   let total_size = this.get_complete_size(request)
   var records: seq[string] = @[]
@@ -182,10 +182,10 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
     xml_response = this.make_request(request)
     records = get_text_value_of_attributeless_node($(xml_response // "metadata"), "metadata")
     for record in records:
-      discard write_to_disk($(i) & ".xml", record, output_directory)
+      discard write_to_disk(fmt"{$(i)}.xml", record, output_directory)
       i += 1
     token = this.get_token($(xml_response // "resumptionToken"))
-    request = this.base_url & "?verb=ListRecords&resumptionToken=" & token
+    request = fmt"{this.base_url}?verb=ListRecords&resumptionToken={token}"
   (i - 1, total_size)
 
 method list_records*(this: OaiRequest, metadata_format: string): seq[string] {.base.} =
@@ -204,8 +204,8 @@ method list_records*(this: OaiRequest, metadata_format: string): seq[string] {.b
   var xml_response: Node
   var token = "first_pass"
   if this.oai_set != "":
-    set_string = "&set=" & this.oai_set
-  var request = this.base_url & "?verb=ListRecords&metadataPrefix=" & metadata_format & set_string
+    set_string = fmt"&set={this.oai_set}"
+  var request = fmt"{this.base_url}?verb=ListRecords&metadataPrefix={metadata_format}{set_string}"
   var records: seq[string] = @[]
   while token.len > 0:
     xml_response = this.make_request(request)
@@ -213,7 +213,7 @@ method list_records*(this: OaiRequest, metadata_format: string): seq[string] {.b
     for record in records:
       result.add(record)
     token = this.get_token($(xml_response // "resumptionToken"))
-    request = this.base_url & "?verb=ListIdentifiers&resumptionToken=" & token
+    request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
 
 proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   ## Constructs a new Oai-PMH request.
