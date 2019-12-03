@@ -17,3 +17,8 @@ requires "xmltools >= 0.1.5"
 
 task test, "Test":
   exec "nim c -r tests/tests.nim"
+
+# Documentation
+
+task docs, "Docs":
+  exec "nim doc --git.url:https://github.com/markpbaggett/noaitools -o:./docs/index.html src/oaitools.nim"
