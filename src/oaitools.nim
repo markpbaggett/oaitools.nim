@@ -215,6 +215,20 @@ method list_records*(this: OaiRequest, metadata_format: string): seq[string] {.b
     token = this.get_token($(xml_response // "resumptionToken"))
     request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
 
+method get_record*(this: OaiRequest, metadata_format: string, oai_identifier: string): string {. base .} =
+  ## Returns an XML record as a string.
+  ##
+  ## Example:
+  ##
+  ## .. code-block:: nim
+  ##
+  ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler", "utk_wderfilms")
+  ##    x.get_record("mods", "urn:dpla.lib.utk.edu.utk_comm:utkcomm_17456")
+  ##
+  var xml_response: Node
+  xml_response = this.make_request(fmt"{this.base_url}?verb=GetRecord&identifier={oai_identifier}&metadataPrefix={metadata_format}")
+  get_text_value_of_attributeless_node($(xml_response // "metadata"), "metadata")[0]
+
 proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   ## Constructs a new Oai-PMH request.
   ##
