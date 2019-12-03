@@ -40,6 +40,14 @@ method get_token(this: OaiRequest, node: string): string {.base.} =
 method count_documents_on_page(this: OaiRequest, node: string): int {.base.} =
   count(node, "<header>")
 
+method parse_dates(this: OaiRequest, dates: (string, string)): (string, string) {. base .} =
+  var from_string, until_string = ""
+  if dates[0] != "":
+    from_string = fmt"&from={dates[0]}"
+  if dates[1] != "":
+    until_string = fmt"&until={dates[1]}"
+  (from_string, until_string)
+
 method get_complete_size*(this: OaiRequest, metadata_format: string): int {.base.} =
   ## Gets the number of records in an OAI-PMH request.
   ##
@@ -129,7 +137,7 @@ method identify*(this: OaiRequest): string {.base.} =
   ##
   $(this.make_request(fmt"{this.base_url}?verb=Identify"))
 
-method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string] {.base.} =
+method list_identifiers*(this: OaiRequest, metadata_format: string, from_date: string = "", until_date: string = ""): seq[string] {.base.} =
   ## Returns a sequence of identifiers for records belonging to an OAI-PMH request.
   ##
   ## Example:
@@ -144,7 +152,8 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string]
   var token = "first_pass"
   if this.oai_set != "":
     set_string = fmt"&set={this.oai_set}"
-  var request = fmt"{this.base_url}?verb=ListIdentifiers&metadataPrefix={metadata_format}{set_string}"
+  var dates = this.parse_dates((from_date, until_date))
+  var request = fmt"{this.base_url}?verb=ListIdentifiers&metadataPrefix={metadata_format}{set_string}{dates[0]}{dates[1]}"
   var identifiers: seq[string] = @[]
   while token.len > 0:
     xml_response = this.make_request(request)
@@ -154,7 +163,7 @@ method list_identifiers*(this: OaiRequest, metadata_format: string): seq[string]
     token = this.get_token($(xml_response // "resumptionToken"))
     request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
 
-method harvest_metadata_records*(this: OaiRequest, metadata_format: string, output_directory: string): (int, int) {.base.} =
+method harvest_metadata_records*(this: OaiRequest, metadata_format: string, output_directory: string, from_date: string = "", until_date: string = ""): (int, int) {.base.} =
   ## Harvests metadata records from an OAI-PMH request to disk.
   ##
   ## Requires:
@@ -174,7 +183,8 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
   var token = "first_pass"
   if this.oai_set != "":
     set_string = fmt"&set={this.oai_set}"
-  var request = fmt"{this.base_url}?verb=ListRecords&metadataPrefix={metadata_format}{set_string}"
+  var dates = this.parse_dates((from_date, until_date))
+  var request = fmt"{this.base_url}?verb=ListRecords&metadataPrefix={metadata_format}{set_string}{dates[0]}{dates[1]}"
   var i = 1
   let total_size = this.get_complete_size(request)
   var records: seq[string] = @[]
@@ -188,7 +198,7 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
     request = fmt"{this.base_url}?verb=ListRecords&resumptionToken={token}"
   (i - 1, total_size)
 
-method list_records*(this: OaiRequest, metadata_format: string): seq[string] {.base.} =
+method list_records*(this: OaiRequest, metadata_format: string, from_date: string = "", until_date: string = ""): seq[string] {.base.} =
   ## Returns a sequence of XML records as strings for each record in a request.
   ##
   ## **NOTE**: Use this method with caution.  This can cause your sequence to get very big.
@@ -205,7 +215,8 @@ method list_records*(this: OaiRequest, metadata_format: string): seq[string] {.b
   var token = "first_pass"
   if this.oai_set != "":
     set_string = fmt"&set={this.oai_set}"
-  var request = fmt"{this.base_url}?verb=ListRecords&metadataPrefix={metadata_format}{set_string}"
+  var dates = this.parse_dates((from_date, until_date))
+  var request = fmt"{this.base_url}?verb=ListRecords&metadataPrefix={metadata_format}{set_string}{dates[0]}{dates[1]}"
   var records: seq[string] = @[]
   while token.len > 0:
     xml_response = this.make_request(request)
