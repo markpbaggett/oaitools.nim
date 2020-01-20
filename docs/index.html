@@ -861,7 +861,7 @@ function main() {
   <li><a class="reference" href="#harvest_metadata_records.e%2COaiRequest%2Cstring%2Cstring%2Cstring%2Cstring"
     title="harvest_metadata_records(this: OaiRequest; metadata_format: string;
                          output_directory: string; from_date: string = &quot;&quot;;
-                         until_date: string = &quot;&quot;): (int, int)"><wbr />harvest_<wbr />metadata_<wbr />records<span class="attachedType">OaiRequest</span></a></li>
+                         until_date: string = &quot;&quot;; identifier = false): (int, int)"><wbr />harvest_<wbr />metadata_<wbr />records<span class="attachedType">OaiRequest</span></a></li>
   <li><a class="reference" href="#list_records.e%2COaiRequest%2Cstring%2Cstring%2Cstring"
     title="list_records(this: OaiRequest; metadata_format: string; from_date: string = &quot;&quot;;
              until_date: string = &quot;&quot;): seq[string]"><wbr />list_<wbr />records<span class="attachedType">OaiRequest</span></a></li>
@@ -891,9 +891,9 @@ function main() {
 
 This type describes an OAI request.
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L24"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L4"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L24" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L4" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -910,9 +910,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Example:</p>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;utk_wderfilms&quot;</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L243"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L267"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L243" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L267" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -939,9 +939,9 @@ class="link-seesrc" target="_blank">Source</a>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">get_complete_size</span><span class="Punctuation">(</span><span class="StringLit">&quot;MODS&quot;</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L51"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L60"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L51" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L60" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="list_sets.e,OaiRequest"></a>
@@ -956,9 +956,9 @@ class="link-seesrc" target="_blank">Source</a>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">list_sets</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L80"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L89"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L80" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L89" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="list_sets_and_descriptions.e,OaiRequest"></a>
@@ -973,9 +973,9 @@ class="link-seesrc" target="_blank">Source</a>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">list_sets_and_descriptions</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L94"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L103"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L94" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L103" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="list_metadata_formats.e,OaiRequest"></a>
@@ -990,9 +990,9 @@ class="link-seesrc" target="_blank">Source</a>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">list_metadata_formats</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L114"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L123"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L114" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L123" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="identify.e,OaiRequest"></a>
@@ -1007,9 +1007,9 @@ class="link-seesrc" target="_blank">Source</a>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">identify</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L128"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L137"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L128" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L137" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="list_identifiers.e,OaiRequest,string,string,string"></a>
@@ -1026,30 +1026,34 @@ class="link-seesrc" target="_blank">Source</a>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;utk_wderfilms&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">list_identifiers</span><span class="Punctuation">(</span><span class="StringLit">&quot;MODS&quot;</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L140"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L149"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L140" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L149" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="harvest_metadata_records.e,OaiRequest,string,string,string,string"></a>
 <dt><pre><span class="Keyword">method</span> <a href="#harvest_metadata_records.e%2COaiRequest%2Cstring%2Cstring%2Cstring%2Cstring"><span class="Identifier">harvest_metadata_records</span></a><span class="Other">(</span><span class="Identifier">this</span><span class="Other">:</span> <a href="oaitools.html#OaiRequest"><span class="Identifier">OaiRequest</span></a><span class="Other">;</span> <span class="Identifier">metadata_format</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                                <span class="Identifier">output_directory</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">from_date</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-                               <span class="Identifier">until_date</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">HttpRequestError</span><span class="Other">,</span> <span class="Identifier">SslError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">TimeoutError</span><span class="Other">,</span>
-    <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">,</span> <span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">XmlError</span><span class="Other">,</span> <span class="Identifier">RegexError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+                               <span class="Identifier">until_date</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">identifier</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">HttpRequestError</span><span class="Other">,</span> <span class="Identifier">SslError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span>
+                 <span class="Identifier">TimeoutError</span><span class="Other">,</span> <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">,</span> <span class="Identifier">OverflowError</span><span class="Other">,</span>
+                 <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">XmlError</span><span class="Other">,</span> <span class="Identifier">RegexError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span>
+    <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">ReadDirEffect</span><span class="Other">,</span> <span class="Identifier">WriteDirEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 <p>Harvests metadata records from an OAI-PMH request to disk.</p>
 <p>Requires:</p>
 <blockquote><p>metadata_format (string): The metadata format. output_directory (string): The full path to where you want to write your files.</p></blockquote>
-<p>Example:</p>
+<p>Accepts:</p>
+<blockquote><p>from_date (string): Date from which to harvest until_date (string): Date to harvest until identifier (bool): Use header/identifier as value to serialize file to disk. Defaults to false and saves as an int.</p></blockquote>
+<p>Examples:</p>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;utk_wderfilms&quot;</span><span class="Punctuation">)</span>
-<span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">harvest_metadata_records</span><span class="Punctuation">(</span><span class="StringLit">&quot;MODS&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;/home/mark/nim_projects/oaitools/output&quot;</span><span class="Punctuation">)</span></pre>
+<span class="Keyword">discard</span> <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">harvest_metadata_records</span><span class="Punctuation">(</span><span class="StringLit">&quot;MODS&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;/home/mark/nim_projects/oaitools/output&quot;</span><span class="Punctuation">)</span></pre><pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;utk_wderfilms&quot;</span><span class="Punctuation">)</span>
+<span class="Keyword">discard</span> <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">harvest_metadata_records</span><span class="Punctuation">(</span><span class="StringLit">&quot;MODS&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;/home/mark/nim_projects/oaitools/output&quot;</span><span class="Punctuation">,</span> <span class="Identifier">identifier</span><span class="Operator">=</span><span class="Identifier">true</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L166"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L175"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L166" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L175" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="list_records.e,OaiRequest,string,string,string"></a>
@@ -1066,9 +1070,9 @@ class="link-seesrc" target="_blank">Source</a>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;utk_wderfilms&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">list_records</span><span class="Punctuation">(</span><span class="StringLit">&quot;MODS&quot;</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L201"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L225"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L201" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L225" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="get_record.e,OaiRequest,string,string"></a>
@@ -1084,9 +1088,9 @@ class="link-seesrc" target="_blank">Source</a>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="Identifier">newOaiRequest</span><span class="Punctuation">(</span><span class="StringLit">&quot;https://dpla.lib.utk.edu/repox/OAIHandler&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;utk_wderfilms&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">get_record</span><span class="Punctuation">(</span><span class="StringLit">&quot;mods&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;urn:dpla.lib.utk.edu.utk_comm:utkcomm_17456&quot;</span><span class="Punctuation">)</span></pre>
 &nbsp;&nbsp;<a
-href="https://github.com/markpbaggett/noaitools/tree/0b5b03abe1bb45f965d36bc3000c1a3af0864f57/src/oaitools.nim#L229"
+href="https://github.com/markpbaggett/noaitools/tree/version-1-0/src/oaitools.nim#L253"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L229" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https://github.com/markpbaggett/noaitools/edit/devel/src/oaitools.nim#L253" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -1099,7 +1103,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-12-03 16:00:32 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-20 16:07:07 UTC</small>
       </div>
     </div>
   </div>
