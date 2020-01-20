@@ -1,4 +1,11 @@
-import httpclient, xmltools, strutils, options, strformat
+import httpclient, xmltools, strutils, options, strformat, os
+
+type 
+  OaiRequest* = ref object of RootObj
+    ## This type describes an OAI request.
+    base_url*: string
+    oai_set*: string
+    client: HttpClient
 
 proc get_text_value_of_attributeless_node(xml: string, node: string): seq[string] =
   for value in xml.split(fmt"<{node}>"):
@@ -12,6 +19,8 @@ proc get_attribute_value_of_node(xml: string, attribute: string): seq[string] =
       result.add(value.split("=")[1].replace("\"", ""))
 
 proc write_to_disk(filename: string, contents: string, destination_directory: string): string =
+  if not existsDir(destination_directory):
+    createDir(destination_directory)
   try:
     let path = destination_directory & "/" & filename
     writeFile(path, contents)
@@ -19,13 +28,6 @@ proc write_to_disk(filename: string, contents: string, destination_directory: st
   except IOError:
     echo "Destination directory does not exist!"
     raise
-
-type 
-  OaiRequest* = ref object of RootObj
-    ## This type describes an OAI request.
-    base_url*: string
-    oai_set*: string
-    client: HttpClient
 
 method make_request(this: OaiRequest, request: string): Node {.base.} =
   let response = this.client.getContent(request)
