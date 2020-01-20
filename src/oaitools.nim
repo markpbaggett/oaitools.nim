@@ -18,6 +18,13 @@ proc get_attribute_value_of_node(xml: string, attribute: string): seq[string] =
     if value.contains(attribute):
       result.add(value.split("=")[1].replace("\"", ""))
 
+proc get_header_identifiers(xml: string): seq[string] =
+  let new_xml = xml.replace("</header>", "</header>|||")
+  for value in new_xml.split("|||"):
+    if value.contains("<identifier>"):
+      let identifier = $(Node.fromStringE(value) / "identifier")
+      result.add(identifier.replace("</identifier>").replace("<identifier>"))
+
 proc write_to_disk(filename: string, contents: string, destination_directory: string): string =
   if not existsDir(destination_directory):
     createDir(destination_directory)
@@ -165,7 +172,7 @@ method list_identifiers*(this: OaiRequest, metadata_format: string, from_date: s
     token = this.get_token($(xml_response // "resumptionToken"))
     request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
 
-method harvest_metadata_records*(this: OaiRequest, metadata_format: string, output_directory: string, from_date: string = "", until_date: string = ""): (int, int) {.base.} =
+method harvest_metadata_records*(this: OaiRequest, metadata_format: string, output_directory: string, from_date: string = "", until_date: string = "", identifier=false): (int, int) {.base.} =
   ## Harvests metadata records from an OAI-PMH request to disk.
   ##
   ## Requires:
@@ -173,12 +180,22 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
   ##   metadata_format (string): The metadata format.
   ##   output_directory (string): The full path to where you want to write your files.
   ##
-  ## Example:
+  ## Accepts:
+  ##
+  ##   from_date (string): Date from which to harvest
+  ##   until_date (string): Date to harvest until
+  ##   identifier (bool): Use header/identifier as value to serialize file to disk. Defaults to false and saves as an int.
+  ##
+  ## Examples:
   ##
   ## .. code-block:: nim
   ##
   ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler", "utk_wderfilms")
-  ##    x.harvest_metadata_records("MODS", "/home/mark/nim_projects/oaitools/output")
+  ##    discard x.harvest_metadata_records("MODS", "/home/mark/nim_projects/oaitools/output")
+  ##
+  ## .. code-block:: nim
+  ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler", "utk_wderfilms")
+  ##    discard x.harvest_metadata_records("MODS", "/home/mark/nim_projects/oaitools/output", identifier=true)
   ##
   var set_string = ""
   var xml_response: Node
@@ -189,12 +206,17 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
   var request = fmt"{this.base_url}?verb=ListRecords&metadataPrefix={metadata_format}{set_string}{dates[0]}{dates[1]}"
   var i = 1
   let total_size = this.get_complete_size(request)
-  var records: seq[string] = @[]
+  var records, header_identifiers: seq[string] = @[]
   while token.len > 0:
     xml_response = this.make_request(request)
     records = get_text_value_of_attributeless_node($(xml_response // "metadata"), "metadata")
+    header_identifiers = get_header_identifiers($(xml_response // "header"))
+    echo fmt"records={len(records)} & idenitifiers={len(header_identifiers)}"
     for record in records:
-      discard write_to_disk(fmt"{$(i)}.xml", record, output_directory)
+      if identifier == false:
+        discard write_to_disk(fmt"{$(i)}.xml", record, output_directory)
+      else:
+        discard write_to_disk(fmt"{header_identifiers[i-1]}.xml", record, output_directory)
       i += 1
     token = this.get_token($(xml_response // "resumptionToken"))
     request = fmt"{this.base_url}?verb=ListRecords&resumptionToken={token}"
