@@ -172,7 +172,7 @@ method list_identifiers*(this: OaiRequest, metadata_format: string, from_date: s
     token = this.get_token($(xml_response // "resumptionToken"))
     request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
 
-method harvest_metadata_records*(this: OaiRequest, metadata_format: string, output_directory: string, from_date: string = "", until_date: string = "", identifier=false): (int, int) {.base.} =
+method harvest_metadata_records*(this: OaiRequest, metadata_format, output_directory: string, from_date: string = "", until_date: string = "", identifier=false, replace_filename=""): (int, int) {.base.} =
   ## Harvests metadata records from an OAI-PMH request to disk.
   ##
   ## Requires:
@@ -216,7 +216,8 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
       if identifier == false:
         discard write_to_disk(fmt"{$(i)}.xml", record, output_directory)
       else:
-        discard write_to_disk(fmt"{header_identifiers[header]}.xml", record, output_directory)
+        let space = ""
+        discard write_to_disk(fmt"{header_identifiers[header].replace(replace_filename, space)}.xml", record, output_directory)
       i += 1
       header += 1
     token = this.get_token($(xml_response // "resumptionToken"))
