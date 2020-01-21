@@ -1,7 +1,7 @@
 # Nim OAI Tools
 
 
-![Travis icon](https://travis-ci.org/markpbaggett/noaitools.png)
+![Travis icon](https://travis-ci.com/markpbaggett/oaitools.nim.png)
 
 A high-level OAI-PMH library for Nim.
 
@@ -42,4 +42,4 @@ echo x.list_identifiers("MODS")
 
 ### More Documentation
 
-All [documentation and code examples](https://markpbaggett.github.io/noaitools/) can be found in this repository.
+All [documentation and code examples](https://markpbaggett.github.io/oaitools.nim/) can be found in this repository.

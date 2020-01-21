@@ -21,4 +21,4 @@ task test, "Test":
 # Documentation
 
 task docs, "Docs":
-  exec "nim doc --git.url:https://github.com/markpbaggett/noaitools -o:./docs/index.html src/oaitools.nim"
+  exec "nim doc --git.url:https://github.com/markpbaggett/oaitools.nim -o:./docs/index.html src/oaitools.nim"
