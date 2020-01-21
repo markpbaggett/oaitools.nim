@@ -211,12 +211,14 @@ method harvest_metadata_records*(this: OaiRequest, metadata_format: string, outp
     xml_response = this.make_request(request)
     records = get_text_value_of_attributeless_node($(xml_response // "metadata"), "metadata")
     header_identifiers = get_header_identifiers($(xml_response // "header"))
+    var header = 0
     for record in records:
       if identifier == false:
         discard write_to_disk(fmt"{$(i)}.xml", record, output_directory)
       else:
-        discard write_to_disk(fmt"{header_identifiers[i-1]}.xml", record, output_directory)
+        discard write_to_disk(fmt"{header_identifiers[header]}.xml", record, output_directory)
       i += 1
+      header += 1
     token = this.get_token($(xml_response // "resumptionToken"))
     request = fmt"{this.base_url}?verb=ListRecords&resumptionToken={token}"
   (i - 1, total_size)
@@ -278,7 +280,3 @@ proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   else:
     base_url = url
   OaiRequest(base_url: base_url, oai_set: oai_set, client: newHttpClient())
-
-when isMainModule:
-  var x = newOaiRequest("https://digital.lib.utk.edu/collections/oai2")
-  echo x.list_sets()
