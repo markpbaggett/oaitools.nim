@@ -8,7 +8,7 @@ A high-level OAI-PMH library for Nim.
 ## Installation
 
 ```shell
-nimble install https://github.com/markpbaggett/noaitools
+nimble install https://github.com/markpbaggett/oaitools.nim
 ```
 
 ## Examples
