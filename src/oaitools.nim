@@ -96,9 +96,18 @@ method list_sets*(this: OaiRequest): seq[string] {.base.} =
   ##   var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler")
   ##   x.list_sets()
   ##
-  let xml_response = this.make_request(fmt"{this.base_url}?verb=ListSets")
-  let results = $(xml_response // "setSpec")
-  get_text_value_of_attributeless_node(results, "setSpec")
+  var
+    token = "first_pass"
+    request = fmt"{this.base_url}?verb=ListSets"
+  while token.len > 0:
+    let
+      xml_response = this.make_request(request)
+      results = $(xml_response // "setSpec")
+      text_values = get_text_value_of_attributeless_node(results, "setSpec")
+    for oai_set in text_values:
+      result.add(oai_set)
+    token = this.get_token($(xml_response // "resumptionToken"))
+    request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
 
 method list_sets_and_descriptions*(this: OaiRequest): seq[(string, string)] {.base.} =
   ## Returns a sequence of tuples with set name and set description available from an OAI-PMH provider.
@@ -110,15 +119,22 @@ method list_sets_and_descriptions*(this: OaiRequest): seq[(string, string)] {.ba
   ##    var x = newOaiRequest("https://dpla.lib.utk.edu/repox/OAIHandler")
   ##    x.list_sets_and_descriptions()
   ##
-  let xml_response = this.make_request(fmt"{this.base_url}?verb=ListSets")
-  let set_specs = $(xml_response // "setSpec")
-  let spec_seq = get_text_value_of_attributeless_node(set_specs, "setSpec")
-  let set_names = $(xml_response // "setName")
-  let name_seq = get_text_value_of_attributeless_node(set_names, "setName")
-  var i = 0
-  while i < len(name_seq) - 1:
-    result.add((spec_seq[i], name_seq[i]))
-    i += 1
+  var
+    token = "first_pass"
+    request = fmt"{this.base_url}?verb=ListSets"
+  while token.len > 0:
+    let
+      xml_response = this.make_request(request)
+      set_specs = $(xml_response // "setSpec")
+      spec_seq = get_text_value_of_attributeless_node(set_specs, "setSpec")
+      set_names = $(xml_response // "setName")
+      name_seq = get_text_value_of_attributeless_node(set_names, "setName")
+    var i = 0
+    while i < len(name_seq) - 1:
+      result.add((spec_seq[i], name_seq[i]))
+      i += 1
+    token = this.get_token($(xml_response // "resumptionToken"))
+    request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
 
 method list_metadata_formats*(this: OaiRequest): seq[string] {.base.} =
   ## Returns a sequence of metadata_formats available from an OAI-PMH provider.
