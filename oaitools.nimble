@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.2.2"
+version       = "0.2.3"
 author        = "Mark Baggett"
 description   = "High Level OAI-PMH library for Nim"
 license       = "GPL-3.0"
