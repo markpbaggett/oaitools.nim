@@ -107,7 +107,7 @@ method list_sets*(this: OaiRequest): seq[string] {.base.} =
     for oai_set in text_values:
       result.add(oai_set)
     token = this.get_token($(xml_response // "resumptionToken"))
-    request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
+    request = fmt"{this.base_url}?verb=ListSets&resumptionToken={token}"
 
 method list_sets_and_descriptions*(this: OaiRequest): seq[(string, string)] {.base.} =
   ## Returns a sequence of tuples with set name and set description available from an OAI-PMH provider.
@@ -134,7 +134,7 @@ method list_sets_and_descriptions*(this: OaiRequest): seq[(string, string)] {.ba
       result.add((spec_seq[i], name_seq[i]))
       i += 1
     token = this.get_token($(xml_response // "resumptionToken"))
-    request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
+    request = fmt"{this.base_url}?verb=ListSets&resumptionToken={token}"
 
 method list_metadata_formats*(this: OaiRequest): seq[string] {.base.} =
   ## Returns a sequence of metadata_formats available from an OAI-PMH provider.
@@ -297,3 +297,7 @@ proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   else:
     base_url = url
   OaiRequest(base_url: base_url, oai_set: oai_set, client: newHttpClient())
+
+when isMainModule:
+  var x = newOaiRequest("http://digital.lib.utk.edu/collections/oai2")
+  echo x.list_identifiers("mods")
