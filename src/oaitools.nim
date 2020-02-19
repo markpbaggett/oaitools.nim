@@ -266,7 +266,6 @@ method list_records*(this: OaiRequest, metadata_format: string, from_date: strin
     for record in records:
       result.add(record)
     token = this.get_token($(xml_response // "resumptionToken"))
-    echo token
     request = fmt"{this.base_url}?verb=ListRecords&resumptionToken={token}"
 
 method get_record*(this: OaiRequest, metadata_format: string, oai_identifier: string): string {. base .} =
