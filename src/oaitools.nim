@@ -266,7 +266,8 @@ method list_records*(this: OaiRequest, metadata_format: string, from_date: strin
     for record in records:
       result.add(record)
     token = this.get_token($(xml_response // "resumptionToken"))
-    request = fmt"{this.base_url}?verb=ListIdentifiers&resumptionToken={token}"
+    echo token
+    request = fmt"{this.base_url}?verb=ListRecords&resumptionToken={token}"
 
 method get_record*(this: OaiRequest, metadata_format: string, oai_identifier: string): string {. base .} =
   ## Returns an XML record as a string.
@@ -297,7 +298,3 @@ proc newOaiRequest*(url: string, oai_set=""): OaiRequest =
   else:
     base_url = url
   OaiRequest(base_url: base_url, oai_set: oai_set, client: newHttpClient())
-
-when isMainModule:
-  var x = newOaiRequest("http://digital.lib.utk.edu/collections/oai2")
-  echo x.list_identifiers("mods")
