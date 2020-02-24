@@ -1,7 +1,7 @@
 # Nim OAI Tools
 
 
-![Travis icon](https://travis-ci.com/markpbaggett/noaitools.png)
+![Build and Test](https://github.com/markpbaggett/oaitools.nim/workflows/Build%20and%20Test/badge.svg)
 
 A high-level OAI-PMH library for Nim.
 

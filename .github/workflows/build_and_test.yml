@@ -1,0 +1,34 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout oaitools
+      uses: actions/checkout@v2
+    
+    - name: Cache nimble things
+      id: cache-nimble
+      uses: actions/cache@v1
+      with:
+        path: ~/.nimble
+        key: ${{ runner.os }}-nimble-stable
+
+    - name: Setup nim
+      uses: jiro4989/setup-nim-action@v1.0.2
+    
+    - name: Install dependencies and my stuff
+      run: |
+        nimble refresh
+        nimble install -y
+
+    - name: Run tests
+      run: nimble test
